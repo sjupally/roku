@@ -8,6 +8,7 @@ Function preShowProjectScreen(style as string) As Object
     screen = CreateObject("roGridScreen")
     screen.SetMessagePort(m.port)
     screen.SetDisplayMode("best-fit")
+    screen.SetUpBehaviorAtTopRow("exit")
     'screen.SetDisplayMode("scale-to-fill")
 
     screen.SetGridStyle(style)
@@ -30,19 +31,28 @@ Function showProjectScreen(screen As Object, gridstyle as string) As string
     assetList = CreateObject("roArray", 1000, true)
     print "getProjectUrl() --> ";getProjectUrl()+getUserId()
     dailog = ShowPleaseWait("Please wait its connecting to Server", "")
+    strLieral = box(",")
     
     json = restClientGetAlbums(getProjectUrl()+getUserId())
         
     count = 0
-    For Each obj In json.resources
-        print "resource " obj.resource.partner 
-        categoryList[count] = obj.resource.projectName
-        if obj.resource.photoWell <> invalid then 
+    For Each obj In json.resources        
+        if obj.resource.photoWell <> invalid then
+            print "resource " obj.resource.projectName
+            assets = CreateObject("roString")
             For i = 0 to obj.resource.photoWell.count()-1
-                assetList[count] = obj.resource.photoWell[i]+","
+                if i = 0 then
+                    assets.SetString(box(obj.resource.photoWell[i]))
+                else    
+                    assets.AppendString(box(obj.resource.photoWell[i]), assets.Len())
+                end if                
+                assets.AppendString(box(","), assets.Len())
             End For
-        End if
-        count = count + 1
+            print "assets " assets
+            categoryList[count] = obj.resource.projectName
+            assetList[count] = assets
+            count = count + 1
+        End if        
     End For    
     
     print "categoryList  ";categoryList
@@ -54,13 +64,12 @@ Function showProjectScreen(screen As Object, gridstyle as string) As string
     screen.SetDescriptionVisible(false)
     showCount = 0
     For i = 0 to assetList.count()-1
+        print "assetList " assetList[i]
         if assetList[i] <> invalid then
             assets = restClientGetAlbums(getAssetsurl()+assetList[i])
-            For Each entitie In assets.entities
-              slides[showCount] = iterateOverAssetList(entitie)
-              screen.SetContentList(showCount, slides[showCount])
-              showCount = showCount + 1
-            End For
+            slides[showCount] = iterateOverAssetList(assets)
+            screen.SetContentList(showCount, slides[showCount])
+            showCount = showCount + 1            
         End if
    End For
    
@@ -83,14 +92,16 @@ Function showProjectScreen(screen As Object, gridstyle as string) As string
     end while
 End Function
 
-Function iterateOverAssetList(entitie As Object) As Object
+Function iterateOverAssetList(assets As Object) As Object
     shows = CreateObject("roArray", 100, true)
-    thumbNailURL = getThumbnailURL()+entitie.files[1].url
-    arrayShow = {               
-        HDPosterUrl : thumbNailURL
-        SDPosterUrl : thumbNailURL
-        url : entitie.files[0].url
-     }               
-    shows.push(arrayShow)        
+    For Each entitie In assets.entities
+        thumbNailURL = getThumbnailURL()+entitie.files[1].url
+        arrayShow = {               
+            HDPosterUrl : thumbNailURL
+            SDPosterUrl : thumbNailURL
+            url : entitie.files[0].url
+         }               
+        shows.push(arrayShow)
+    End For       
     return shows
 End Function

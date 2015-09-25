@@ -159,6 +159,8 @@ Function restClientGetAlbums(url As String) As Object
     roUrlTransfer.AddHeader("Authorization", "OAuth "+GetToken())
     roUrlTransfer.SetUrl(url)
     
+    print "getting from " + roUrlTransfer.GetUrl()
+    
     if (roUrlTransfer.AsyncGetToString())
         while (true)
             msg = wait(0, port)

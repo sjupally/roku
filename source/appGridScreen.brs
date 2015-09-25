@@ -9,7 +9,7 @@ Function preShowGridScreen(style as string) As Object
     screen.SetMessagePort(m.port)
     screen.SetDisplayMode("best-fit")
     'screen.SetDisplayMode("scale-to-fill")
-
+    screen.SetUpBehaviorAtTopRow("exit")
     screen.SetGridStyle(style)
     return screen
 
@@ -83,12 +83,12 @@ End Function
 Function iterateOverSeriesList(entitie As Object) As Object
         shows = CreateObject("roArray", 100, true)
         for each asset in entitie.assetIdList
-        thumbNailURL = getThumbnailURL()+asset.thumbnailEncryption
-            arrayShow = {               
-                HDPosterUrl : thumbNailURL
-                SDPosterUrl : thumbNailURL
-                url : thumbNailURL
-            }               
+            thumbNailURL = getThumbnailURL()+asset.thumbnailEncryption
+               arrayShow = {               
+                    HDPosterUrl : thumbNailURL
+                    SDPosterUrl : thumbNailURL
+                    url : thumbNailURL
+               }               
             shows.push(arrayShow)
         end for  
     return shows

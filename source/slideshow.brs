@@ -18,6 +18,11 @@ Function itostr(i As Integer) As String
     return strTrim(str)
 End Function
 
+Function floattostr(flo As Float) As String
+    str = Str(flo)
+    return strTrim(str)
+End Function
+
 Function PrepDisplaySlideShow()
     print "---- Prep DisplaySlideShow  ----"
     

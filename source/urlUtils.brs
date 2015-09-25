@@ -12,7 +12,7 @@ Function getAlbumUrl() As String
 End Function
 
 Function getProjectUrl() As String
-    url = "http://projects.snapfish.com/v1/project?accountId="
+    url = "http://projects.snapfish.com/v1/project?queryLimit=0&accountId="
     return url
 End Function
 
